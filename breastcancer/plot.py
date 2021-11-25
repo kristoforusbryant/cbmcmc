@@ -8,13 +8,8 @@ from utils.myGraph import Graph
 from utils.diagnostics import IAT, str_list_to_adjm
 
 def main():
-    n, n_obs = 30, 20
-    gname = 'circle'
-
-    with open(f"data/graph_{gname}_{n}.pkl", 'rb') as handle:
-        g = pickle.load(handle)
-
-    K = np.loadtxt(f"data/{gname}_precision_{n}.csv", delimiter=",")
+    n, n_obs = 93, 250
+    gname = 'breastcancer'
     data = np.loadtxt(f"data/{gname}_data_{n}_{n_obs}.csv", delimiter=",")
 
     # Edges
@@ -28,7 +23,7 @@ def main():
     # Plotting Trace Plot
     import matplotlib.pyplot as plt
     plt.plot(edge_sizes, label='Edges')
-    plt.plot(triangles_sizes, label='StarCycleBases')
+    plt.plot(triangles_sizes, label='Star Cycle Bases')
 
     plt.xlabel('Iterations', fontsize=15)
     plt.ylabel('Size', fontsize=15)
@@ -36,7 +31,7 @@ def main():
 
     y_pos = min(edge_sizes[1000:])
     txt = f"IAT: {round(IAT(edge_sizes), 3)} (Edges),\n"
-    txt += f"IAT: {round(IAT(triangles_sizes), 3)} (StarCycleBases)"
+    txt += f"IAT: {round(IAT(triangles_sizes), 3)} (Star Cycle Bases)"
     plt.text(1, y_pos, txt, fontsize=14)
 
     plt.title('Graph Sizes Trace Plot', fontsize=16)
@@ -54,6 +49,7 @@ def main():
     gnet_adjm1 = np.loadtxt(f'res/gene_net_pval_1_{gname}_{n}_{n_obs}.csv', delimiter=' ')
     gnet_adjm2 = np.loadtxt(f'res/gene_net_pval_2_{gname}_{n}_{n_obs}.csv', delimiter=' ')
     gnet_adjm3 = np.loadtxt(f'res/gene_net_pval_3_{gname}_{n}_{n_obs}.csv', delimiter=' ')
+    gnet_adjm4 = np.loadtxt(f'res/gene_net_pval_4_{gname}_{n}_{n_obs}.csv', delimiter=' ')
 
     def get_adjm_split(adjm):
         tril = np.tril_indices(adjm.shape[0], 1)
@@ -61,31 +57,24 @@ def main():
         edgeM[tril] = edgeM[tril] > .5
         return edgeM
 
-    fig, axs = plt.subplots(2, 5, figsize=(25, 10))
+    fig, axs = plt.subplots(2, 4, figsize=(20, 10))
 
-    axs[0, 0].imshow(g.GetAdjM())
-    axs[0, 0].set_title("True Graph", fontsize=20)
-    K_ = K.copy()
-    K_[np.eye(30, dtype=bool)] = 0
-    axs[0, 1].imshow(np.abs(K_))
-    axs[0, 1].set_title("True Precision Matrix", fontsize=20)
-    emp_K = np.linalg.inv(data.transpose() @ data)
-    axs[0, 2].imshow(emp_K)
-    axs[0, 2].set_title("Empirical Precision Matrix", fontsize=20)
-    axs[0, 3].imshow(get_adjm_split(edge_adjm))
-    axs[0, 3].set_title("Edges", fontsize=20)
-    axs[0, 4].imshow(get_adjm_split(triangles_adjm))
-    axs[0, 4].set_title("Star Cycle Bases", fontsize=20)
-    axs[1, 0].imshow(glasso_adjm)
-    axs[1, 0].set_title("Glasso", fontsize=20)
-    axs[1, 1].imshow(get_adjm_split(bd_adjm))
-    axs[1, 1].set_title("BDgraph", fontsize=20)
-    axs[1, 2].imshow(get_adjm_split(gnet_adjm1))
-    axs[1, 2].set_title("GeneNet (pval < 0.001)", fontsize=20)
-    axs[1, 3].imshow(get_adjm_split(gnet_adjm2))
-    axs[1, 3].set_title("GeneNet (pval < 0.01)", fontsize=20)
-    axs[1, 4].imshow(get_adjm_split(gnet_adjm3))
-    axs[1, 4].set_title("GeneNet (pval < 0.05)", fontsize=20)
+    axs[0, 0].imshow(get_adjm_split(edge_adjm))
+    axs[0, 0].set_title("Edges", fontsize=20)
+    axs[0, 1].imshow(get_adjm_split(triangles_adjm))
+    axs[0, 1].set_title("Star Cycle Bases", fontsize=20)
+    axs[0, 2].imshow(get_adjm_split(bd_adjm))
+    axs[0, 2].set_title("BDgraph", fontsize=20)
+    axs[0, 3].imshow(glasso_adjm)
+    axs[0, 3].set_title("Glasso", fontsize=20)
+    axs[1, 0].imshow(get_adjm_split(gnet_adjm1))
+    axs[1, 0].set_title("GeneNet (pval < 0.001)", fontsize=20)
+    axs[1, 1].imshow(get_adjm_split(gnet_adjm2))
+    axs[1, 1].set_title("GeneNet (pval < 0.01)", fontsize=20)
+    axs[1, 2].imshow(get_adjm_split(gnet_adjm3))
+    axs[1, 2].set_title("GeneNet (pval < 0.05)", fontsize=20)
+    axs[1, 3].imshow(get_adjm_split(gnet_adjm4))
+    axs[1, 3].set_title("GeneNet (pval < 0.1)", fontsize=20)
 
     fig.suptitle('Comparing Posterior Inference against other Covariance Selection Algorithms', fontsize=30)
     fig.savefig(f'figs/comparison_{gname}_{n}_{n_obs}.pdf', bbox_inches='tight')

@@ -22,4 +22,4 @@ mbG <- stepw(model=mbF, data= bc.marg)
 # Writing as csv
 write.table(adjMat(mbF), 'data/mbF.csv', sep=',', row.names=F, col.names=F)
 write.table(adjMat(mbG), 'data/mbG.csv', sep=',', row.names=F, col.names=F)
-write.table(bc.marg, 'data/data.csv', sep=',', row.names=F, col.names=F)
+write.table(bc.marg, 'data/breastcancer_data_93_250.csv', sep=',', row.names=F, col.names=F)
