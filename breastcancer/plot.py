@@ -25,17 +25,17 @@ def plot_traces(edge_sizes, triangles_sizes):
     plt.savefig(f'figs/compare_traces_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
 
 def _get_adjm_split(adjm):
-        tril = np.tril_indices(adjm.shape[0], 1)
-        edgeM = adjm.copy()
-        edgeM[tril] = edgeM[tril] > .5
-        return edgeM
+    triu = np.triu_indices(adjm.shape[0], 1)
+    edgeM = adjm.copy()
+    edgeM[triu] = edgeM[triu] > .5
+    return edgeM
 
 def plot_comparison(edge_adjm, triangles_adjm):
     fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
     divider = make_axes_locatable(axs[0])
     cax = divider.append_axes('right', size='5%', pad=0.05)
-    im = axs[0].imshow(_get_adjm_split(edge_adjm), cmap='Greys')
+    im = axs[0].pcolormesh(np.rot90(_get_adjm_split(edge_adjm)), cmap="Greys", vmin=0.0, vmax=1.0)
     cbar = fig.colorbar(im, cax=cax, orientation='vertical')
     cbar.ax.tick_params(labelsize=18)
     axs[0].set_title('Edge', fontsize=42)
@@ -43,13 +43,13 @@ def plot_comparison(edge_adjm, triangles_adjm):
 
     divider = make_axes_locatable(axs[1])
     cax = divider.append_axes('right', size='5%', pad=0.05)
-    im = axs[1].imshow(_get_adjm_split(triangles_adjm), cmap='Greys')
+    im = axs[1].pcolormesh(np.rot90(_get_adjm_split(triangles_adjm)), cmap="Greys", vmin=0.0, vmax=1.0)
     cbar = fig.colorbar(im, cax=cax, orientation='vertical')
     cbar.ax.tick_params(labelsize=18)
     axs[1].set_title('Star Cycle Bases', fontsize=42)
     axs[1].tick_params(axis='both', which='major', labelsize=22)
 
-    fig.suptitle('Comparing Edge and Star Cycle Bases', fontsize=50)
+    fig.suptitle('Comparing Edge and Star Cycle Bases', fontsize=45, y=1.05)
     fig.savefig(f'figs/compare_edge_star_cycle_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
 
 def plot_all_comparisons(edge_adjm, triangles_adjm, data):
@@ -79,7 +79,7 @@ def plot_all_comparisons(edge_adjm, triangles_adjm, data):
             if i == 0:
                 divider = make_axes_locatable(axs[i, j])
                 cax = divider.append_axes('right', size='5%', pad=0.05)
-                im = axs[i, j].imshow(adjms[idx], cmap='Greys')
+                im = axs[i, j].pcolormesh(np.rot90(adjms[idx]), cmap="Greys", vmin=0.0, vmax=1.0)
                 cbar = fig.colorbar(im, cax=cax, orientation='vertical')
                 cbar.ax.tick_params(labelsize=18)
             else:
