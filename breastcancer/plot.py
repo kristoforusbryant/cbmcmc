@@ -70,7 +70,6 @@ def plot_all_comparisons(edge_adjm, triangles_adjm, data):
     gnet_adjm3 = np.loadtxt(f'res/gene_net_pval_3_{GNAME}_{N}_{N_OBS}.csv', delimiter=' ')
     gnet_adjm4 = np.loadtxt(f'res/gene_net_pval_4_{GNAME}_{N}_{N_OBS}.csv', delimiter=' ')
 
-    print('Plotting Heatmaps...')
     fig, axs = plt.subplots(2, 4, figsize=(40, 20))
 
     titles = ["Edge", "Star Cycle Bases", "BDgraph", "Graphical Lasso", "GeneNet (pval < 0.001)", "GeneNet (pval < 0.01)", "GeneNet (pval < 0.05)", "GeneNet (pval < 0.1)"]
