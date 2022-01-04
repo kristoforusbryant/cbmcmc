@@ -14,6 +14,7 @@ edge_adjm = np.loadtxt(f"breastcancer/res/edge_adjm_{gname}_{n}_{n_obs}.csv", de
 triangles_adjm = np.loadtxt(f"breastcancer/res/triangles_adjm_{gname}_{n}_{n_obs}.csv", delimiter=',')
 
 def draw_graph(thresh=.5):
+    """ Draws the p-percentile graphs obtained from the Edge and Star cycle bases algorithms """
     # Edges
     edge_g = Graph(93)
     edge_g.SetFromAdjM(np.array(edge_adjm > thresh, dtype=int))

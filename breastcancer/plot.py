@@ -9,20 +9,22 @@ N, N_OBS = 93, 250
 GNAME = 'breastcancer'
 
 def plot_traces(edge_sizes, triangles_sizes):
-    plt.plot(edge_sizes, label='Edges')
-    plt.plot(triangles_sizes, label='Star Cycle Bases')
+    """ Plots traces of the Edges and Star cycles bases MCMC algorithms """
+    fig, ax = plt.subplots()
+    ax.plot(edge_sizes, label='Edges')
+    ax.plot(triangles_sizes, label='Star Cycle Bases')
 
-    plt.xlabel('Iterations', fontsize=15)
-    plt.ylabel('Size', fontsize=15)
-    plt.legend(loc='upper right', fontsize=12)
+    ax.set_xlabel('Iterations', fontsize=15)
+    ax.set_ylabel('Size', fontsize=15)
+    ax.legend(loc='upper right', fontsize=12)
 
     y_pos = min(edge_sizes[1000:])
     txt = f"IAT: {round(IAT(edge_sizes), 3)} (Edges),\n"
     txt += f"IAT: {round(IAT(triangles_sizes), 3)} (Star Cycle Bases)"
-    plt.text(1, y_pos, txt, fontsize=14)
+    ax.text(1, y_pos, txt, fontsize=14)
 
-    plt.title('Graph Sizes Trace Plot', fontsize=16)
-    plt.savefig(f'figs/compare_traces_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
+    ax.set_title('Graph Sizes Trace Plot', fontsize=16)
+    return fig, ax
 
 def _get_adjm_split(adjm):
     triu = np.triu_indices(adjm.shape[0], 1)
@@ -31,6 +33,7 @@ def _get_adjm_split(adjm):
     return edgeM
 
 def plot_comparison(edge_adjm, triangles_adjm):
+    """ Plots a figure comparing posterior edge inclusion probabilities of Edges and Star cycles bases algorithms """
     fig, axs = plt.subplots(1, 2, figsize=(20, 10))
 
     divider = make_axes_locatable(axs[0])
@@ -50,9 +53,10 @@ def plot_comparison(edge_adjm, triangles_adjm):
     axs[1].tick_params(axis='both', which='major', labelsize=22)
 
     fig.suptitle('Comparing Edge and Star Cycle Bases', fontsize=45, y=1.05)
-    fig.savefig(f'figs/compare_edge_star_cycle_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
+    return fig, axs
 
 def plot_all_comparisons(edge_adjm, triangles_adjm, data):
+    """ Plots a figure comparing covariance selection outcomes of the Edge and Star cycle bases algorithms with GraphicalLasso, GeneNet and BDgraph """
     from sklearn.covariance import GraphicalLassoCV
     glasso = GraphicalLassoCV(max_iter=1000).fit(data)
     glasso_prec = np.abs(glasso.precision_)
@@ -88,7 +92,7 @@ def plot_all_comparisons(edge_adjm, triangles_adjm, data):
             axs[i, j].tick_params(axis='both', which='major', labelsize=22)
 
     fig.suptitle('Comparing against other Covariance Selection Algorithms', fontsize=55)
-    fig.savefig(f'figs/compare_posterior_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
+    return fig, axs
 
 
 def main():
@@ -104,13 +108,16 @@ def main():
     triangles_adjm = np.loadtxt(f"res/triangles_adjm_{GNAME}_{N}_{N_OBS}.csv", delimiter=',')
 
     print('Plotting Trace Plots...')
-    plot_traces(edge_sizes, triangles_sizes)
+    fig, _ = plot_traces(edge_sizes, triangles_sizes)
+    fig.savefig(f'figs/compare_traces_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
 
     print('Plotting Comparison between Edges and Star cycles bases')
-    plot_comparison(edge_adjm, triangles_adjm)
+    fig, _ = plot_comparison(edge_adjm, triangles_adjm)
+    fig.savefig(f'figs/compare_edge_star_cycle_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
 
     print('Plotting Comparisons with glasso, BDgraph, and GeneNet')
-    plot_all_comparisons(edge_adjm, triangles_adjm, data)
+    fig, _ = plot_all_comparisons(edge_adjm, triangles_adjm, data)
+    fig.savefig(f'figs/compare_posterior_{GNAME}_{N}_{N_OBS}.pdf', bbox_inches='tight')
 
 if __name__ == '__main__':
     main()
