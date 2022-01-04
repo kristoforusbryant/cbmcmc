@@ -1,6 +1,7 @@
-import numpy as np
 import copy
-import random
+import numpy as np
+
+from utils.myGraph import Graph
 
 def BronKerbosch1(G, P, R=None, X=None):
     P = set(P)
@@ -343,7 +344,6 @@ def laplace_approx(G, delta, D, as_log_prob=True, diag=False):
     Log of the Laplace approximation of the normalization constant of the G-Wishart
     distribution outlined by Lenkoski and Dobra (2011, doi:10.1198/jcgs.2010.08181)
     """
-    from utils.Graph import Graph
     G = Graph(len(G), G)
     G = igraph.Graph.Adjacency(G.GetAdjM().tolist(), mode=1)
     df = delta

@@ -1,10 +1,9 @@
 import numpy as np
 
-def thin(a, lag=1):
-    indices = [i for i in range(len(a)) if i % lag == 0]
-    return a[indices]
-
 def ACF(a):
+    """
+    A function that computes Autocorrelation Function (ACF) from an array.
+    """
     n = len(a)
     a_bar = np.mean(a)
     a = a - a_bar # de-mean a
@@ -14,7 +13,10 @@ def ACF(a):
     return np.array(acf) / normalising
 
 def IAT(a):
-    # Implementation according to https://github.com/LaplacesDemonR/LaplacesDemon/blob/master/R/IAT.R
+    """
+    A function that computes Integrated Autocorrelation Time (IAT) from an array.
+    Implementation according to https://github.com/LaplacesDemonR/LaplacesDemon/blob/master/R/IAT.R
+    """
 
     if a is None: raise ValueError("None array")
     a = np.array(a)
@@ -55,32 +57,9 @@ def IAT(a):
     IAT = -1 + 2*IAT
     return IAT
 
-def create_edge_matrix(samples):
-    n = len(samples[0])
-    edge_M = np.zeros((n,n))
-    for g in samples:
-        for k, li in g.GetDOL().items():
-            for v in li:
-                if k > v:
-                    edge_M[k,v] +=1
-                    edge_M[v,k] +=1
-    edge_M = edge_M/len(samples)
-    return edge_M
-
-def create_edge_matrix_from_binary_str(strings, n):
-    strlen = len(strings[0])
-    l = np.zeros(strlen, dtype=int)
-    for s in strings:
-        for i in range(strlen):
-            if int(s[i]):
-                l[i] += 1
-    edge_M = np.zeros((n,n))
-    edge_M[np.triu_indices(n, 1)] = l / len(strings)
-    return edge_M
-
 def str_list_to_adjm(n, str_list):
     """
-    Changing binary string representation of a graph to the adjacency matrix representation.
+    A function that takes a list of graph samples in string format and computes its edge inclusion probabilities.
     """
     AdjM = np.zeros((n,n))
     triu = np.triu_indices(n, 1)
@@ -91,6 +70,9 @@ def str_list_to_adjm(n, str_list):
     return (AdjM + AdjM.transpose()) / len(str_list)
 
 def str_list_to_median_graph(n, str_list, threshold=.5):
+    """
+    A function that takes a list of graph samples in string format and computes the median graph estimate.
+    """
     return (str_list_to_adjm(n, str_list) > threshold).astype(int)
 
 """Assumption: for all distances len(s1) == len(s2)"""

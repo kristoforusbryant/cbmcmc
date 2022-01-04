@@ -181,7 +181,7 @@ class MCMC_Sampler_Ratio:
         self.prop = proposal
         self.lik = likelihood
         self.data = data
-        self.res = {'SAMPLES':[], 
+        self.res = {'SAMPLES':[],
                     'ALPHAS':[],
                     'PARAMS':[],
                     'PARAMS_PROPS': [],
