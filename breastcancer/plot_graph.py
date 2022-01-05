@@ -10,8 +10,8 @@ THRESH = [0.5, 0.8, 0.9, 0.95]
 n, n_obs = 93, 250
 gname = 'breastcancer'
 
-edge_adjm = np.loadtxt(f"breastcancer/res/edge_adjm_{gname}_{n}_{n_obs}.csv", delimiter=',')
-triangles_adjm = np.loadtxt(f"breastcancer/res/triangles_adjm_{gname}_{n}_{n_obs}.csv", delimiter=',')
+edge_adjm = np.loadtxt(f"res/edge_adjm_{gname}_{n}_{n_obs}.csv", delimiter=',')
+triangles_adjm = np.loadtxt(f"res/triangles_adjm_{gname}_{n}_{n_obs}.csv", delimiter=',')
 
 def draw_graph(thresh=.5):
     """ Draws the p-percentile graphs obtained from the Edge and Star cycle bases algorithms """
@@ -53,4 +53,4 @@ def draw_graph(thresh=.5):
 if __name__ == '__main__':
     for thresh in THRESH:
         fig, axs = draw_graph(thresh)
-        fig.savefig(f"breastcancer/figs/graph_thresh-{thresh}.pdf", bbox_inches='tight')
+        fig.savefig(f"figs/graph_thresh-{thresh}.pdf", bbox_inches='tight')
