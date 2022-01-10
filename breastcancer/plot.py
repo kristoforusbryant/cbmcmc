@@ -34,25 +34,39 @@ def _get_adjm_split(adjm):
 
 def plot_comparison(edge_adjm, triangles_adjm):
     """ Plots a figure comparing posterior edge inclusion probabilities of Edges and Star cycles bases algorithms """
-    fig, axs = plt.subplots(1, 2, figsize=(20, 10))
+    fig, axs = plt.subplots(1, 2, figsize=(10, 6))
 
-    divider = make_axes_locatable(axs[0])
-    cax = divider.append_axes('right', size='5%', pad=0.05)
-    im = axs[0].pcolormesh(np.rot90(_get_adjm_split(edge_adjm)), cmap="Greys", vmin=0.0, vmax=1.0)
-    cbar = fig.colorbar(im, cax=cax, orientation='vertical')
-    cbar.ax.tick_params(labelsize=18)
-    axs[0].set_title('Edge', fontsize=42)
-    axs[0].tick_params(axis='both', which='major', labelsize=22)
+    for idx in range(2):
+        im = axs[idx].pcolormesh(_get_adjm_split(
+            [edge_adjm, triangles_adjm][idx]
+        ).T, cmap="Greys", vmin=0.0, vmax=1.0)
 
-    divider = make_axes_locatable(axs[1])
-    cax = divider.append_axes('right', size='5%', pad=0.05)
-    im = axs[1].pcolormesh(np.rot90(_get_adjm_split(triangles_adjm)), cmap="Greys", vmin=0.0, vmax=1.0)
-    cbar = fig.colorbar(im, cax=cax, orientation='vertical')
-    cbar.ax.tick_params(labelsize=18)
-    axs[1].set_title('Star Cycle Bases', fontsize=42)
-    axs[1].tick_params(axis='both', which='major', labelsize=22)
+        axs[idx].set_title(['Edge basis', 'Star cycle basis'][idx])
+        axs[idx].tick_params(axis='both', which='major')
+        axs[idx].axis("image")  # Ensure the plots are square.
+        axs[idx].invert_yaxis()
+        axs[idx].xaxis.set_label_position("top")
+        axs[idx].set_xlabel("Vertex index")
+        axs[idx].set_ylabel("Vertex index")
 
-    fig.suptitle('Comparing Edge and Star Cycle Bases', fontsize=45, y=1.05)
+        axs[idx].tick_params(
+            top=True, bottom=False, labeltop=True, labelbottom=False
+        )
+
+        labels = np.arange(
+            start=10, stop=edge_adjm.shape[0] + 1, step=10, dtype=int
+        )
+
+        axs[idx].set_xticks(labels - 0.5)
+        axs[idx].set_yticks(labels - 0.5)
+        axs[idx].set_xticklabels(labels)
+        axs[idx].set_yticklabels(labels)
+
+    bar = fig.colorbar(
+        im, ax=axs, shrink=0.5, orientation="horizontal", pad=0.05
+    )
+    
+    bar.set_label(r"Posterior edge inclusion probability")
     return fig, axs
 
 def plot_all_comparisons(edge_adjm, triangles_adjm, data):
