@@ -38,10 +38,16 @@ def draw_graph(thresh=.5):
             # edol is the bigger set
             G = nx.from_dict_of_lists(edol)
             pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot', args='-Grankdir=LR')
+            for k in edol:
+                if k not in sdol:
+                    sdol[k] = []
         elif bool(set(sdol) - set(edol)) & (not (set(edol) - set(sdol))):
             # sdol is the bigger set
             G = nx.from_dict_of_lists(sdol)
             pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot', args='-Grankdir=LR')
+            for k in sdol:
+                if k not in edol:
+                    edol[k] = []
         else:
             for k in sdol:
                 if k not in edol:
@@ -49,6 +55,8 @@ def draw_graph(thresh=.5):
 
             G = nx.from_dict_of_lists(edol)
             pos = nx.drawing.nx_agraph.graphviz_layout(G, prog='dot', args='-Grankdir=LR')
+
+
 
     # Plotting
     fig, axs = plt.subplots(1, 2, figsize=(20, 10))
